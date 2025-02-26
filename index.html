@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vokabeltrainer</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #1e1e1e; color: white; }
+        #container { max-width: 400px; margin: 50px auto; padding: 20px; background: #333; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+        #vokabel { font-size: 2em; margin: 20px; font-weight: bold; opacity: 0; transform: scale(0.9); transition: opacity 0.5s, transform 0.5s; }
+        input { padding: 10px; font-size: 1em; width: calc(100% - 22px); border: none; border-radius: 5px; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 1em; cursor: pointer; background: #007BFF; color: white; border: none; border-radius: 5px; }
+        button:hover { background: #0056b3; }
+        #ergebnis { margin-top: 20px; font-size: 1.2em; font-weight: bold; opacity: 0; transition: opacity 0.5s; }
+        .richtig { color: #0f0; animation: pop 0.5s ease-in-out; }
+        .falsch { color: #f00; animation: shake 0.5s ease-in-out; }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Vokabeltrainer</h1>
+        <p id="vokabel">Lade...</p>
+        <input type="text" id="antwort" placeholder="Übersetzung eingeben" onkeypress="if(event.key==='Enter') pruefen()">
+        <button onclick="pruefen()">Überprüfen</button>
+        <p id="ergebnis"></p>
+    </div>
+    
+    <script>
+        let vokabeln = [
+            { wort: "Hund", uebersetzung: "dog" },
+            { wort: "Katze", uebersetzung: "cat" },
+            { wort: "Haus", uebersetzung: "house" }
+        ];
+
+        let aktuelleVokabel = {};
+
+        function neueVokabel() {
+            aktuelleVokabel = vokabeln[Math.floor(Math.random() * vokabeln.length)];
+            let vokabelElement = document.getElementById("vokabel");
+            let container = document.getElementById("container");
+            let ergebnis = document.getElementById("ergebnis");
+            
+            container.style.opacity = "0";
+            container.style.transform = "scale(0.9)";
+            setTimeout(() => {
+                vokabelElement.innerText = aktuelleVokabel.wort;
+                document.getElementById("antwort").value = "";
+                ergebnis.innerText = "";
+                vokabelElement.style.opacity = "1";
+                vokabelElement.style.transform = "scale(1)";
+                container.style.opacity = "1";
+                container.style.transform = "scale(1)";
+            }, 500);
+        }
+
+        function pruefen() {
+            let eingabe = document.getElementById("antwort").value.trim().toLowerCase();
+            let ergebnis = document.getElementById("ergebnis");
+            
+            if (eingabe === aktuelleVokabel.uebersetzung) {
+                ergebnis.innerText = "✅ Richtig!";
+                ergebnis.className = "richtig";
+            } else {
+                ergebnis.innerText = "❌ Falsch! Richtig wäre: " + aktuelleVokabel.uebersetzung;
+                ergebnis.className = "falsch";
+            }
+            ergebnis.style.opacity = "1";
+            setTimeout(neueVokabel, 1500);
+        }
+
+        neueVokabel();
+    </script>
+</body>
+</html>
